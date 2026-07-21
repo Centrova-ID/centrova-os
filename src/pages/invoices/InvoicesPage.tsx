@@ -37,19 +37,36 @@ export function InvoicesPage() {
   useEffect(() => { loadInvoices() }, [loadInvoices])
 
   async function handleCreateInvoice() {
+    // Try RPC first, fallback to timestamp-based number if RPC returns duplicate
     const { data: numData } = await supabase.rpc('get_next_invoice_number')
-    const invoiceNumber = numData || `INV-${new Date().getFullYear()}-001`
+    let invoiceNumber = numData || `INV-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`
     const today = new Date().toISOString().split('T')[0]
     const due = new Date()
     due.setDate(due.getDate() + 30)
     const dueStr = due.toISOString().split('T')[0]
-    const { data } = await supabase.from('invoices').insert({
+    
+    // Try insert; if duplicate, retry with unique timestamp number
+    let { data } = await supabase.from('invoices').insert({
       invoice_number: invoiceNumber,
       issue_date: today,
       due_date: dueStr,
       status: 'draft',
       created_by: user?.id,
     }).select().single()
+    
+    // Retry with unique number if duplicate
+    if (!data) {
+      invoiceNumber = `INV-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`
+      const { data: retryData } = await supabase.from('invoices').insert({
+        invoice_number: invoiceNumber,
+        issue_date: today,
+        due_date: dueStr,
+        status: 'draft',
+        created_by: user?.id,
+      }).select().single()
+      data = retryData
+    }
+    
     if (data) {
       await logActivity({ module: 'invoices', activity_type: 'created', description: `Invoice ${invoiceNumber} dibuat`, entity_id: data.id, entity_type: 'invoice' })
       navigate(`/invoices/${data.id}`)
