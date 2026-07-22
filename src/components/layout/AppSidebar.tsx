@@ -110,7 +110,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="cursor-pointer" onClick={() => navigate('/')}>
               <div className="flex items-center gap-2">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground overflow-hidden">
+                <div className="flex size-8 items-center justify-center overflow-hidden">
                   <img src="/favicon.svg" alt="Centrova OS" className="size-8" />
                 </div>
                 <div className="flex flex-col leading-none">
