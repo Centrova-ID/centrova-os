@@ -1231,6 +1231,11 @@ export interface Database {
           content?: string
         }
       }
+      invoice_versions: {
+        Row: { id: string; invoice_id: string; version_number: number; snapshot: Json; items_snapshot: Json; change_summary: string | null; created_by: string | null; created_at: string }
+        Insert: { id?: string; invoice_id: string; version_number?: number; snapshot: Json; items_snapshot?: Json; change_summary?: string | null; created_by?: string | null; created_at?: string }
+        Update: never
+      }
     }
     Functions: {
       get_next_invoice_number: {

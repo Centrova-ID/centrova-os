@@ -4,13 +4,14 @@ import { supabase } from '@/lib/supabase'
 import { logActivity } from '@/lib/activity'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatDate, formatCurrency, isOverdue } from '@/lib/utils'
-import { PageHeader } from '@/components/shared/PageHeader'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Plus, Search, Receipt } from 'lucide-react'
+import { Plus, Search, Receipt, Sparkles } from 'lucide-react'
+import { AIInvoiceGenerator } from '@/components/invoices/AIInvoiceGenerator'
 import type { Database } from '@/lib/database.types'
 
 type Invoice = Database['public']['Tables']['invoices']['Row']
@@ -23,6 +24,7 @@ export function InvoicesPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [aiOpen, setAiOpen] = useState(false)
 
   const loadInvoices = useCallback(async () => {
     setLoading(true)
@@ -37,15 +39,13 @@ export function InvoicesPage() {
   useEffect(() => { loadInvoices() }, [loadInvoices])
 
   async function handleCreateInvoice() {
-    // Try RPC first, fallback to timestamp-based number if RPC returns duplicate
     const { data: numData } = await supabase.rpc('get_next_invoice_number')
     let invoiceNumber = numData || `INV-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`
     const today = new Date().toISOString().split('T')[0]
     const due = new Date()
     due.setDate(due.getDate() + 30)
     const dueStr = due.toISOString().split('T')[0]
-    
-    // Try insert; if duplicate, retry with unique timestamp number
+
     let { data } = await supabase.from('invoices').insert({
       invoice_number: invoiceNumber,
       issue_date: today,
@@ -53,8 +53,7 @@ export function InvoicesPage() {
       status: 'draft',
       created_by: user?.id,
     }).select().single()
-    
-    // Retry with unique number if duplicate
+
     if (!data) {
       invoiceNumber = `INV-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`
       const { data: retryData } = await supabase.from('invoices').insert({
@@ -66,7 +65,7 @@ export function InvoicesPage() {
       }).select().single()
       data = retryData
     }
-    
+
     if (data) {
       await logActivity({ module: 'invoices', activity_type: 'created', description: `Invoice ${invoiceNumber} dibuat`, entity_id: data.id, entity_type: 'invoice' })
       navigate(`/invoices/${data.id}`)
@@ -78,11 +77,22 @@ export function InvoicesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Invoices"
-        description="Kelola seluruh invoice client"
-        action={{ label: 'Create Invoice', onClick: handleCreateInvoice, icon: <Plus className="size-4" /> }}
-      />
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Invoices</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Kelola seluruh invoice client</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="outline" onClick={() => setAiOpen(true)}>
+            <Sparkles className="size-4" />
+            AI Generate
+          </Button>
+          <Button onClick={handleCreateInvoice}>
+            <Plus className="size-4" />
+            Create Invoice
+          </Button>
+        </div>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-lg border p-4">
@@ -156,6 +166,8 @@ export function InvoicesPage() {
           </TableBody>
         </Table>
       </div>
+
+      <AIInvoiceGenerator open={aiOpen} onOpenChange={setAiOpen} />
     </div>
   )
 }

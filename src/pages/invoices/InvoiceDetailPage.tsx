@@ -2,8 +2,11 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { logActivity } from '@/lib/activity'
+import { useAuth } from '@/contexts/AuthContext'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import { StatusBadge } from '@/components/shared/StatusBadge'
+import { InvoicePrintView } from '@/components/invoices/InvoicePrintView'
+import { InvoiceVersionHistory } from '@/components/invoices/InvoiceVersionHistory'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,13 +15,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { ArrowLeft, Plus, Trash2, Save, Send, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Save, Send, CheckCircle, Printer, History } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 
 type Invoice = Database['public']['Tables']['invoices']['Row']
 type InvoiceStatus = Invoice['status']
 type Client = Database['public']['Tables']['clients']['Row']
 type Project = Database['public']['Tables']['projects']['Row']
+type CompanyProfile = Database['public']['Tables']['company_profile']['Row']
 
 interface InvoiceItemForm {
   id?: string
@@ -29,31 +33,36 @@ interface InvoiceItemForm {
   total: number
   sort_order: number
   isNew?: boolean
+  created_at?: string
 }
 
 export function InvoiceDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [invoice, setInvoice] = useState<Invoice | null>(null)
   const [items, setItems] = useState<InvoiceItemForm[]>([])
   const [clients, setClients] = useState<Client[]>([])
   const [projects, setProjects] = useState<Project[]>([])
   const [client, setClient] = useState<Client | null>(null)
+  const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
-
+  const [printOpen, setPrintOpen] = useState(false)
+  const [versionOpen, setVersionOpen] = useState(false)
   const [form, setForm] = useState<Partial<Invoice>>({})
 
   const loadInvoice = useCallback(async () => {
     if (!id) return
     setLoading(true)
-    const [invRes, itemsRes, clientsRes, projRes] = await Promise.all([
+    const [invRes, itemsRes, clientsRes, projRes, compRes] = await Promise.all([
       supabase.from('invoices').select('*').eq('id', id).maybeSingle(),
       supabase.from('invoice_items').select('*').eq('invoice_id', id).order('sort_order'),
       supabase.from('clients').select('*').is('deleted_at', null).order('company_name'),
       supabase.from('projects').select('id, name').is('deleted_at', null).order('name'),
+      supabase.from('company_profile').select('*').eq('id', '00000000-0000-0000-0000-000000000001').maybeSingle(),
     ])
     const inv = invRes.data
     setInvoice(inv)
@@ -61,6 +70,7 @@ export function InvoiceDetailPage() {
     setItems((itemsRes.data || []).map(i => ({ ...i, isNew: false })))
     setClients(clientsRes.data || [])
     setProjects((projRes.data || []) as Project[])
+    setCompanyProfile(compRes.data as CompanyProfile | null)
     if (inv?.client_id) {
       const cl = (clientsRes.data || []).find(c => c.id === inv.client_id) || null
       setClient(cl)
@@ -108,9 +118,34 @@ export function InvoiceDetailPage() {
 
   const { subtotal, taxAmount, total } = calcTotals(items, Number(form.discount || 0), Number(form.tax_rate || 0))
 
+  async function createVersionSnapshot() {
+    if (!invoice) return
+    const { data: versions } = await supabase
+      .from('invoice_versions')
+      .select('version_number')
+      .eq('invoice_id', invoice.id)
+      .order('version_number', { ascending: false })
+      .limit(1)
+    const nextVersion = (versions?.[0]?.version_number ?? 0) + 1
+    const { data: currentItems } = await supabase
+      .from('invoice_items')
+      .select('*')
+      .eq('invoice_id', invoice.id)
+      .order('sort_order')
+    await supabase.from('invoice_versions').insert({
+      invoice_id: invoice.id,
+      version_number: nextVersion,
+      snapshot: { ...invoice },
+      items_snapshot: currentItems || [],
+      change_summary: `Manual save — version ${nextVersion}`,
+      created_by: user?.id,
+    })
+  }
+
   async function handleSave() {
     if (!invoice) return
     setSaving(true)
+    await createVersionSnapshot()
     const updateData = {
       ...form,
       subtotal,
@@ -167,22 +202,35 @@ export function InvoiceDetailPage() {
           </div>
           {client && <p className="text-sm text-muted-foreground mt-0.5">{client.company_name}</p>}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          <Button variant="outline" size="sm" onClick={() => setVersionOpen(true)}>
+            <History className="size-4" />Versions
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setPrintOpen(true)}>
+            <Printer className="size-4" />Print / PDF
+          </Button>
           {isDirty && (
-            <Button onClick={handleSave} disabled={saving}><Save className="size-4" />{saving ? 'Saving...' : 'Save'}</Button>
+            <Button onClick={handleSave} disabled={saving} size="sm">
+              <Save className="size-4" />{saving ? 'Saving...' : 'Save'}
+            </Button>
           )}
           {invoice.status === 'draft' && (
-            <Button variant="outline" onClick={() => handleStatusChange('sent')}><Send className="size-4" />Send</Button>
+            <Button variant="outline" size="sm" onClick={() => handleStatusChange('sent')}>
+              <Send className="size-4" />Send
+            </Button>
           )}
           {invoice.status === 'sent' && (
-            <Button variant="outline" className="text-green-600" onClick={() => handleStatusChange('paid')}><CheckCircle className="size-4" />Mark Paid</Button>
+            <Button variant="outline" size="sm" className="text-green-600" onClick={() => handleStatusChange('paid')}>
+              <CheckCircle className="size-4" />Mark Paid
+            </Button>
           )}
-          <Button variant="outline" size="icon" className="text-destructive hover:text-destructive" onClick={() => setShowDelete(true)}><Trash2 className="size-4" /></Button>
+          <Button variant="outline" size="icon" className="text-destructive hover:text-destructive" onClick={() => setShowDelete(true)}>
+            <Trash2 className="size-4" />
+          </Button>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Invoice Meta */}
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
@@ -216,24 +264,19 @@ export function InvoiceDetailPage() {
           </div>
         </div>
 
-        {/* Summary */}
         <div className="rounded-lg border p-4 space-y-3 h-fit">
           <h3 className="font-semibold text-sm">Summary</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-muted-foreground">Discount</span>
-              <div className="flex items-center gap-2">
-                <Input type="number" className="h-7 w-28 text-right" min={0} value={form.discount || 0}
-                  onChange={e => { setForm(f => ({ ...f, discount: Number(e.target.value) })); setIsDirty(true) }} />
-              </div>
+              <Input type="number" className="h-7 w-28 text-right" min={0} value={form.discount || 0}
+                onChange={e => { setForm(f => ({ ...f, discount: Number(e.target.value) })); setIsDirty(true) }} />
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-muted-foreground">Tax (%)</span>
-              <div className="flex items-center gap-2">
-                <Input type="number" className="h-7 w-28 text-right" min={0} max={100} step={0.5} value={form.tax_rate || 0}
-                  onChange={e => { setForm(f => ({ ...f, tax_rate: Number(e.target.value) })); setIsDirty(true) }} />
-              </div>
+              <Input type="number" className="h-7 w-28 text-right" min={0} max={100} step={0.5} value={form.tax_rate || 0}
+                onChange={e => { setForm(f => ({ ...f, tax_rate: Number(e.target.value) })); setIsDirty(true) }} />
             </div>
             <div className="flex justify-between text-muted-foreground"><span>Tax Amount</span><span>{formatCurrency(taxAmount)}</span></div>
             <Separator />
@@ -242,7 +285,6 @@ export function InvoiceDetailPage() {
         </div>
       </div>
 
-      {/* Line Items */}
       <div className="rounded-lg border overflow-hidden">
         <div className="bg-muted/50 px-4 py-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">Line Items</h3>
@@ -271,7 +313,6 @@ export function InvoiceDetailPage() {
         </div>
       </div>
 
-      {/* Payment Notes */}
       {(invoice.status === 'paid' || invoice.status === 'sent') && (
         <div className="space-y-2">
           <Label>Payment Notes</Label>
@@ -285,15 +326,41 @@ export function InvoiceDetailPage() {
             <p className="text-sm font-medium">Status History</p>
             <p className="text-xs text-muted-foreground">Invoice dibuat: {formatDate(invoice.created_at)}</p>
           </div>
-          <div className="flex gap-2">
-            {invoice.status !== 'cancelled' && (
-              <Button variant="outline" size="sm" className="text-muted-foreground" onClick={() => handleStatusChange('cancelled')}>
-                Cancel Invoice
-              </Button>
-            )}
-          </div>
+          {invoice.status !== 'cancelled' && (
+            <Button variant="outline" size="sm" className="text-muted-foreground" onClick={() => handleStatusChange('cancelled')}>
+              Cancel Invoice
+            </Button>
+          )}
         </div>
       )}
+
+      <InvoicePrintView
+        open={printOpen}
+        onOpenChange={setPrintOpen}
+        invoice={invoice}
+        items={items.map((item, i) => ({
+          id: item.id ?? `temp-${i}`,
+          invoice_id: invoice.id,
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          discount: item.discount,
+          total: item.total,
+          sort_order: item.sort_order,
+          created_at: item.created_at ?? new Date().toISOString(),
+        }))}
+        clientName={client?.company_name || ''}
+        clientAddress={client?.address || ''}
+        clientEmail={client?.email || ''}
+        company={companyProfile}
+      />
+
+      <InvoiceVersionHistory
+        invoiceId={invoice.id}
+        open={versionOpen}
+        onOpenChange={setVersionOpen}
+        onRestored={() => { setVersionOpen(false); loadInvoice() }}
+      />
 
       <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
         <AlertDialogContent>
