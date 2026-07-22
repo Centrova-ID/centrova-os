@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Spinner } from '@/components/ui/spinner'
-import { Building2 } from 'lucide-react'
 
 export function AuthPage() {
   const { signIn, signUp } = useAuth()
@@ -49,11 +48,11 @@ export function AuthPage() {
     <div className="min-h-svh flex items-center justify-center bg-muted/30 p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Building2 className="size-6" />
+          <div className="flex size-16 items-center justify-center overflow-hidden">
+            <img src="/favicon.svg" alt="Centrova OS" className="size-16" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Centrova OS</h1>
-          <p className="text-sm text-muted-foreground">Sistem operasi internal PT Centrova Teknologi Indonesia</p>
+          <h1 className="text-2xl font-bold tracking-tight">Selamat Datang Kembali</h1>
+          <p className="text-sm text-muted-foreground">Masuk untuk mengakses dashboard Centrova OS</p>
         </div>
 
         <Card>
@@ -78,8 +77,6 @@ export function AuthPage() {
               )}
 
               <TabsContent value="login" className="space-y-4 mt-0">
-                <CardTitle className="text-lg">Selamat datang kembali</CardTitle>
-                <CardDescription>Masuk ke akun Centrova OS Anda</CardDescription>
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="login-email">Email</Label>
@@ -111,8 +108,6 @@ export function AuthPage() {
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4 mt-0">
-                <CardTitle className="text-lg">Buat akun baru</CardTitle>
-                <CardDescription>Daftarkan akun founder Centrova Anda</CardDescription>
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signup-name">Nama Lengkap</Label>
