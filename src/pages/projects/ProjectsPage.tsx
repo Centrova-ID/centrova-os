@@ -93,7 +93,7 @@ export function ProjectsPage() {
           <Input placeholder="Cari project..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-44">
+          <SelectTrigger className="w-full sm:w-44">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -160,11 +160,11 @@ export function ProjectsPage() {
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto">
           <DialogHeader><DialogTitle>New Project</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Project Name *</Label><Input value={form.name || ''} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Nama project" /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Client</Label>
                 <Select value={form.client_id || ''} onValueChange={v => setForm(f => ({ ...f, client_id: v || null }))}>
@@ -179,7 +179,7 @@ export function ProjectsPage() {
                 <Input value={form.service || ''} onChange={e => setForm(f => ({ ...f, service: e.target.value }))} placeholder="Web Development" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Priority</Label>
                 <Select value={form.priority || 'medium'} onValueChange={v => setForm(f => ({ ...f, priority: v as Priority }))}>
@@ -195,7 +195,7 @@ export function ProjectsPage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2"><Label>Start Date</Label><Input type="date" value={form.start_date || ''} onChange={e => setForm(f => ({ ...f, start_date: e.target.value || null }))} /></div>
               <div className="grid gap-2"><Label>Deadline</Label><Input type="date" value={form.deadline || ''} onChange={e => setForm(f => ({ ...f, deadline: e.target.value || null }))} /></div>
             </div>

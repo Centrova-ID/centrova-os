@@ -193,16 +193,18 @@ export function InvoiceDetailPage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/invoices')}><ArrowLeft className="size-4" /></Button>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold">{invoice.invoice_number}</h1>
-            <StatusBadge status={invoice.status} type="invoice" />
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4 flex-1">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/invoices')}><ArrowLeft className="size-4" /></Button>
+          <div className="flex-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold">{invoice.invoice_number}</h1>
+              <StatusBadge status={invoice.status} type="invoice" />
+            </div>
+            {client && <p className="text-sm text-muted-foreground mt-0.5">{client.company_name}</p>}
           </div>
-          {client && <p className="text-sm text-muted-foreground mt-0.5">{client.company_name}</p>}
         </div>
-        <div className="flex items-center gap-2 flex-wrap justify-end">
+        <div className="flex items-center gap-2 flex-wrap md:justify-end">
           <Button variant="outline" size="sm" onClick={() => setVersionOpen(true)}>
             <History className="size-4" />Versions
           </Button>
@@ -232,7 +234,7 @@ export function InvoiceDetailPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label>Client</Label>
               <Select value={form.client_id || ''} onValueChange={v => { setForm(f => ({ ...f, client_id: v || null })); setIsDirty(true); setClient(clients.find(c => c.id === v) || null) }}>
@@ -248,7 +250,7 @@ export function InvoiceDetailPage() {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label>Issue Date</Label>
               <Input type="date" value={form.issue_date || ''} onChange={e => { setForm(f => ({ ...f, issue_date: e.target.value })); setIsDirty(true) }} />
@@ -290,11 +292,11 @@ export function InvoiceDetailPage() {
           <h3 className="text-sm font-semibold">Line Items</h3>
           <Button size="sm" variant="outline" onClick={addItem}><Plus className="size-3" />Add Item</Button>
         </div>
-        <div className="p-4 space-y-2">
+        <div className="p-4 space-y-2 overflow-x-auto">
           {items.length === 0 ? (
             <p className="text-center text-sm text-muted-foreground py-4">Belum ada item. Klik Add Item untuk menambahkan.</p>
           ) : (
-            <>
+            <div className="min-w-[650px] space-y-2">
               <div className="grid gap-2 text-xs font-medium text-muted-foreground" style={{ gridTemplateColumns: '1fr 80px 120px 80px 100px 36px' }}>
                 <span>Description</span><span className="text-right">Qty</span><span className="text-right">Unit Price</span><span className="text-right">Disc%</span><span className="text-right">Total</span><span />
               </div>
@@ -308,7 +310,7 @@ export function InvoiceDetailPage() {
                   <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-destructive" onClick={() => removeItem(i)}><Trash2 className="size-3.5" /></Button>
                 </div>
               ))}
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -231,7 +231,7 @@ export function RevenuePage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -297,7 +297,7 @@ export function RevenuePage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Revenue' : 'Record Revenue'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
             <div className="space-y-1.5">
               <Label>Category</Label>
               <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
@@ -311,7 +311,7 @@ export function RevenuePage() {
               <Label>Description</Label>
               <Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Deskripsi revenue" rows={2} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Amount (IDR)</Label>
                 <Input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0" />
@@ -321,7 +321,7 @@ export function RevenuePage() {
                 <Input type="date" value={form.transaction_date} onChange={e => setForm({ ...form, transaction_date: e.target.value })} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Client (Optional)</Label>
                 <Select value={form.client_id} onValueChange={(v) => setForm({ ...form, client_id: v === 'none' ? '' : v, project_id: '', invoice_id: '' })}>
@@ -343,7 +343,7 @@ export function RevenuePage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Invoice (Optional)</Label>
                 <Select value={form.invoice_id} onValueChange={(v) => setForm({ ...form, invoice_id: v === 'none' ? '' : v })} disabled={!form.client_id}>
@@ -364,7 +364,7 @@ export function RevenuePage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Status</Label>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as 'completed' | 'pending' })}>

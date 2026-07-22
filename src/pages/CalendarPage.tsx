@@ -216,8 +216,9 @@ export function CalendarPage() {
       {loading ? (
         <Skeleton className="h-[600px]" />
       ) : view === 'month' ? (
-        <div className="rounded-lg border">
-          <div className="grid grid-cols-7 border-b">
+        <div className="rounded-lg border overflow-x-auto">
+          <div className="min-w-[650px]">
+            <div className="grid grid-cols-7 border-b">
             {DAY_NAMES.map(d => <div key={d} className="p-2 text-center text-xs font-medium text-muted-foreground">{d}</div>)}
           </div>
           <div className="grid grid-cols-7">
@@ -253,7 +254,8 @@ export function CalendarPage() {
           </div>
         </div>
       ) : view === 'week' ? (
-        <div className="rounded-lg border">
+        <div className="rounded-lg border overflow-x-auto">
+          <div className="min-w-[650px]">
           <div className="grid grid-cols-7 border-b">
             {weekDays.map((d, i) => (
               <div key={i} className={`p-2 text-center text-xs font-medium ${isToday(d) ? 'text-primary' : 'text-muted-foreground'}`}>

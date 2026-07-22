@@ -313,23 +313,31 @@ export function ProjectDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/projects')}><ArrowLeft className="size-4" /></Button>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold tracking-tight">{project.name}</h1>
-            <StatusBadge status={project.status} type="project" />
-            <PriorityBadge priority={project.priority} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/projects')} className="shrink-0">
+            <ArrowLeft className="size-4" />
+          </Button>
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">{project.name}</h1>
+              <StatusBadge status={project.status} type="project" />
+              <PriorityBadge priority={project.priority} />
+            </div>
+            {project.client && <p className="text-sm text-muted-foreground mt-0.5">{project.client.company_name}</p>}
           </div>
-          {project.client && <p className="text-sm text-muted-foreground mt-0.5">{project.client.company_name}</p>}
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Button variant="outline" size="sm" onClick={() => { setEditForm(project); setShowEdit(true) }}><Pencil className="size-4" />Edit</Button>
-          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => setShowDelete(true)}><Trash2 className="size-4" /></Button>
+        <div className="flex items-center gap-2 sm:ml-auto">
+          <Button variant="outline" size="sm" className="flex-1 sm:flex-initial" onClick={() => { setEditForm(project); setShowEdit(true) }}>
+            <Pencil className="size-4" />Edit
+          </Button>
+          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive flex-1 sm:flex-initial" onClick={() => setShowDelete(true)}>
+            <Trash2 className="size-4" />Delete
+          </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Progress</p>
@@ -366,20 +374,22 @@ export function ProjectDetailPage() {
       )}
 
       <Tabs defaultValue="overview">
-        <TabsList className="flex-wrap">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="milestones">Milestones ({milestones.length})</TabsTrigger>
-          <TabsTrigger value="deliverables">Deliverables ({deliverables.length})</TabsTrigger>
-          <TabsTrigger value="tasks">Tasks ({tasks.length})</TabsTrigger>
-          <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
-          <TabsTrigger value="meetings">Meetings ({meetings.length})</TabsTrigger>
-          <TabsTrigger value="notes">Notes ({notes.length})</TabsTrigger>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
-        </TabsList>
+        <div className="w-full overflow-x-auto scrollbar-none">
+          <TabsList className="w-full justify-start flex-nowrap min-w-max">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="milestones">Milestones ({milestones.length})</TabsTrigger>
+            <TabsTrigger value="deliverables">Deliverables ({deliverables.length})</TabsTrigger>
+            <TabsTrigger value="tasks">Tasks ({tasks.length})</TabsTrigger>
+            <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
+            <TabsTrigger value="meetings">Meetings ({meetings.length})</TabsTrigger>
+            <TabsTrigger value="notes">Notes ({notes.length})</TabsTrigger>
+            <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* OVERVIEW */}
         <TabsContent value="overview" className="mt-4 space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
             <OverviewStat label="Milestones" value={`${doneMs}/${milestones.length}`} icon={<Flag className="size-4 text-muted-foreground" />} />
             <OverviewStat label="Tasks Done" value={`${doneTasks}/${tasks.length}`} icon={<CheckCircle2 className="size-4 text-muted-foreground" />} />
             <OverviewStat label="Deliverables" value={String(deliverables.length)} icon={<Package className="size-4 text-muted-foreground" />} />
@@ -616,11 +626,11 @@ export function ProjectDetailPage() {
 
       {/* Edit Dialog */}
       <Dialog open={showEdit} onOpenChange={setShowEdit}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto">
           <DialogHeader><DialogTitle>Edit Project</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Name *</Label><Input value={editForm.name || ''} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Status</Label>
                 <Select value={editForm.status} onValueChange={v => setEditForm(f => ({ ...f, status: v as ProjectStatus }))}>
@@ -637,7 +647,7 @@ export function ProjectDetailPage() {
               </div>
             </div>
             <div className="grid gap-2"><Label>Progress ({editForm.progress ?? 0}%)</Label><Input type="range" min={0} max={100} value={editForm.progress ?? 0} onChange={e => setEditForm(f => ({ ...f, progress: Number(e.target.value) }))} /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2"><Label>Start Date</Label><Input type="date" value={editForm.start_date || ''} onChange={e => setEditForm(f => ({ ...f, start_date: e.target.value || null }))} /></div>
               <div className="grid gap-2"><Label>Deadline</Label><Input type="date" value={editForm.deadline || ''} onChange={e => setEditForm(f => ({ ...f, deadline: e.target.value || null }))} /></div>
             </div>
@@ -656,7 +666,7 @@ export function ProjectDetailPage() {
           <DialogHeader><DialogTitle>Add Milestone</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Title *</Label><Input value={milestoneForm.title} onChange={e => setMilestoneForm(f => ({ ...f, title: e.target.value }))} /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2"><Label>Deadline</Label><Input type="date" value={milestoneForm.deadline} onChange={e => setMilestoneForm(f => ({ ...f, deadline: e.target.value }))} /></div>
               <div className="grid gap-2">
                 <Label>Status</Label>
@@ -682,7 +692,7 @@ export function ProjectDetailPage() {
           <DialogHeader><DialogTitle>Add Task</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Title *</Label><Input value={taskForm.title} onChange={e => setTaskForm(f => ({ ...f, title: e.target.value }))} /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Priority</Label>
                 <Select value={taskForm.priority} onValueChange={v => setTaskForm(f => ({ ...f, priority: v as Task['priority'] }))}>
@@ -710,11 +720,11 @@ export function ProjectDetailPage() {
 
       {/* Add Deliverable */}
       <Dialog open={showDeliverable} onOpenChange={setShowDeliverable}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto">
           <DialogHeader><DialogTitle>Add Deliverable</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Name *</Label><Input value={deliverableForm.name} onChange={e => setDeliverableForm(f => ({ ...f, name: e.target.value }))} /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Type</Label>
                 <Select value={deliverableForm.type} onValueChange={v => setDeliverableForm(f => ({ ...f, type: v as Deliverable['type'] }))}>
@@ -730,7 +740,7 @@ export function ProjectDetailPage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2"><Label>Due Date</Label><Input type="date" value={deliverableForm.due_date} onChange={e => setDeliverableForm(f => ({ ...f, due_date: e.target.value }))} /></div>
               <div className="grid gap-2">
                 <Label>Milestone (Optional)</Label>
@@ -756,11 +766,11 @@ export function ProjectDetailPage() {
 
       {/* Add Meeting */}
       <Dialog open={showMeeting} onOpenChange={setShowMeeting}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto">
           <DialogHeader><DialogTitle>Add Meeting Notes</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Title *</Label><Input value={meetingForm.title} onChange={e => setMeetingForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. Weekly Sync" /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2"><Label>Date *</Label><Input type="date" value={meetingForm.meeting_date} onChange={e => setMeetingForm(f => ({ ...f, meeting_date: e.target.value }))} /></div>
               <div className="grid gap-2"><Label>Location / Platform</Label><Input value={meetingForm.location} onChange={e => setMeetingForm(f => ({ ...f, location: e.target.value }))} placeholder="e.g. Google Meet" /></div>
             </div>

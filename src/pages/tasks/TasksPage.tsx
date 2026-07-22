@@ -159,7 +159,7 @@ export function TasksPage() {
           <Input placeholder="Cari task..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-36"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
             {COLUMNS.map(c => <SelectItem key={c.status} value={c.status}>{c.label}</SelectItem>)}
@@ -176,7 +176,7 @@ export function TasksPage() {
       {loading ? (
         <div className="grid gap-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>
       ) : view === 'kanban' ? (
-        <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
           {COLUMNS.map(col => {
             const colTasks = tasks.filter(t => t.status === col.status)
             return (
@@ -261,7 +261,7 @@ export function TasksPage() {
           <DialogHeader><DialogTitle>Add Task</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Title *</Label><Input value={form.title || ''} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Nama task" /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Priority</Label>
                 <Select value={form.priority || 'medium'} onValueChange={v => setForm(f => ({ ...f, priority: v as Priority }))}>
@@ -297,7 +297,7 @@ export function TasksPage() {
       {/* Task Detail Dialog */}
       {selectedTask && (
         <Dialog open={showDetail} onOpenChange={setShowDetail}>
-          <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <DialogHeader>
               <div className="flex items-start justify-between gap-2 pr-6">
                 <DialogTitle className="text-base">{selectedTask.title}</DialogTitle>
@@ -310,7 +310,7 @@ export function TasksPage() {
             <div className="space-y-4">
               {selectedTask.description && <p className="text-sm text-muted-foreground">{selectedTask.description}</p>}
 
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 {selectedTask.deadline && (
                   <div><span className="text-muted-foreground text-xs">Deadline</span><p className={isOverdue(selectedTask.deadline) && selectedTask.status !== 'done' ? 'text-destructive' : ''}>{formatDate(selectedTask.deadline)}</p></div>
                 )}

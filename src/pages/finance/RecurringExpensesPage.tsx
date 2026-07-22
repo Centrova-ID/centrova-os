@@ -332,12 +332,12 @@ export function RecurringExpensesPage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Recurring Expense' : 'Add Recurring Expense'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
             <div className="space-y-1.5">
               <Label>Name</Label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. Office Rent" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Category</Label>
                 <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as RecurringExpense['category'] })}>
@@ -361,7 +361,7 @@ export function RecurringExpensesPage() {
               <Label>Description (Optional)</Label>
               <Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} placeholder="Catatan tambahan" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Amount (IDR)</Label>
                 <Input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0" />
@@ -371,7 +371,7 @@ export function RecurringExpensesPage() {
                 <Input value={form.vendor} onChange={e => setForm({ ...form, vendor: e.target.value })} placeholder="e.g. BCA" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Start Date</Label>
                 <Input type="date" value={form.start_date} onChange={e => setForm({ ...form, start_date: e.target.value })} />
@@ -381,7 +381,7 @@ export function RecurringExpensesPage() {
                 <Input type="date" value={form.next_due_date} onChange={e => setForm({ ...form, next_due_date: e.target.value })} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>End Date (Optional)</Label>
                 <Input type="date" value={form.end_date} onChange={e => setForm({ ...form, end_date: e.target.value })} />

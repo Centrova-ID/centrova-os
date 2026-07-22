@@ -145,7 +145,7 @@ export function ServiceCatalogPage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -197,7 +197,7 @@ export function ServiceCatalogPage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Service' : 'Add Service'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
             <div className="space-y-1.5">
               <Label>Service Name</Label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. Website Development" />
@@ -206,7 +206,7 @@ export function ServiceCatalogPage() {
               <Label>Description</Label>
               <Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Deskripsi layanan" rows={2} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Category</Label>
                 <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
@@ -226,7 +226,7 @@ export function ServiceCatalogPage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Default Price (IDR)</Label>
                 <Input type="number" value={form.default_price} onChange={e => setForm({ ...form, default_price: e.target.value })} placeholder="0" />

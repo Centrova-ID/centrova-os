@@ -98,14 +98,14 @@ export function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Total Client" value={stats?.totalClients ?? 0} icon={<Users className="size-4 text-muted-foreground" />} onClick={() => navigate('/clients')} />
         <StatCard title="Active Projects" value={stats?.activeProjects ?? 0} icon={<FolderKanban className="size-4 text-muted-foreground" />} onClick={() => navigate('/projects')} />
         <StatCard title="Outstanding Invoice" value={stats?.outstandingInvoices ?? 0} icon={<AlertCircle className="size-4 text-muted-foreground" />} onClick={() => navigate('/invoices')} />
         <StatCard title="Revenue" value={formatCurrency(stats?.revenue ?? 0)} icon={<TrendingUp className="size-4 text-muted-foreground" />} onClick={() => navigate('/invoices')} isText />
       </div>
 
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Completed Projects" value={stats?.completedProjects ?? 0} icon={<FolderKanban className="size-4 text-muted-foreground" />} />
         <StatCard title="Total Invoices" value={stats?.totalInvoices ?? 0} icon={<Receipt className="size-4 text-muted-foreground" />} onClick={() => navigate('/invoices')} />
         <StatCard title="Upcoming Deadlines" value={stats?.upcomingDeadlines ?? 0} icon={<Calendar className="size-4 text-muted-foreground" />} onClick={() => navigate('/projects')} />
@@ -264,7 +264,7 @@ function DashboardSkeleton() {
         <Skeleton className="h-8 w-40" />
         <Skeleton className="h-4 w-64 mt-2" />
       </div>
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i}><CardContent className="p-6"><Skeleton className="h-8 w-16" /></CardContent></Card>
         ))}

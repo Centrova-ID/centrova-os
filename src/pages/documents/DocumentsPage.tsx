@@ -221,7 +221,7 @@ export function DocumentsPage() {
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader><DialogTitle>Upload Dokumen</DialogTitle></DialogHeader>
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
             <div className="rounded-lg bg-muted p-3">
               <p className="text-sm font-medium">{selectedFiles.length} file dipilih</p>
               {selectedFiles.map(f => <p key={f.name} className="text-xs text-muted-foreground truncate">{f.name}</p>)}
@@ -236,7 +236,7 @@ export function DocumentsPage() {
                 <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="grid gap-2">
                 <Label>Client</Label>
                 <Select value={uploadForm.client_id} onValueChange={v => setUploadForm(f => ({ ...f, client_id: v }))}>

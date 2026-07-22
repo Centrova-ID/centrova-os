@@ -216,7 +216,7 @@ export function AIInvoiceGenerator({ open, onOpenChange }: AIInvoiceGeneratorPro
         {step === 'context' && (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">Pilih konteks untuk membantu AI membuat invoice yang akurat.</p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label>Client (Opsional)</Label>
                 <Select value={clientId} onValueChange={v => { setClientId(v === 'none' ? '' : v); setProjectId('') }}>
@@ -273,7 +273,7 @@ export function AIInvoiceGenerator({ open, onOpenChange }: AIInvoiceGeneratorPro
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">Review dan edit draft invoice sebelum dibuat. AI telah mengisi otomatis berdasarkan konteks.</p>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label>Invoice Number</Label>
                 <Input value={draft.invoice_number} onChange={e => setDraft(d => d ? { ...d, invoice_number: e.target.value } : d)} />

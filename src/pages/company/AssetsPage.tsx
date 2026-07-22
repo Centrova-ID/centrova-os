@@ -187,7 +187,7 @@ export function AssetsPage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -247,8 +247,8 @@ export function AssetsPage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Asset' : 'Add Asset'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Asset Name</Label>
                 <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. MacBook Pro 14" />
@@ -263,7 +263,7 @@ export function AssetsPage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Brand</Label>
                 <Input value={form.brand} onChange={e => setForm({ ...form, brand: e.target.value })} placeholder="e.g. Apple" />
@@ -277,7 +277,7 @@ export function AssetsPage() {
               <Label>Serial Number</Label>
               <Input value={form.serial_number} onChange={e => setForm({ ...form, serial_number: e.target.value })} placeholder="Serial number" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Purchase Date</Label>
                 <Input type="date" value={form.purchase_date} onChange={e => setForm({ ...form, purchase_date: e.target.value })} />
@@ -287,7 +287,7 @@ export function AssetsPage() {
                 <Input type="number" value={form.purchase_price} onChange={e => setForm({ ...form, purchase_price: e.target.value })} placeholder="0" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Warranty Expiration</Label>
                 <Input type="date" value={form.warranty_expiration} onChange={e => setForm({ ...form, warranty_expiration: e.target.value })} />

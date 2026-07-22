@@ -98,7 +98,7 @@ export function FinanceDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Finance Dashboard</h1>
           <p className="text-muted-foreground text-sm mt-1">Ringkasan keuangan Centrova</p>
@@ -110,8 +110,8 @@ export function FinanceDashboardPage() {
       </div>
 
       {/* Cash Balance + Monthly Summary */}
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-4">
-        <Card className="lg:col-span-2">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="sm:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">Cash Balance</CardTitle>
             <Wallet className="size-4 text-muted-foreground" />
@@ -283,7 +283,7 @@ function FinanceDashboardSkeleton() {
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64 mt-2" />
       </div>
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i}><CardContent className="p-6"><Skeleton className="h-8 w-24" /></CardContent></Card>
         ))}

@@ -209,7 +209,7 @@ export function LegalDocumentsPage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -273,8 +273,8 @@ export function LegalDocumentsPage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Document' : 'Add Document'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Title</Label>
                 <Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="e.g. Akta Pendirian" />
@@ -293,7 +293,7 @@ export function LegalDocumentsPage() {
               <Label>Document Number</Label>
               <Input value={form.document_number} onChange={e => setForm({ ...form, document_number: e.target.value })} placeholder="e.g. AHU-0012345" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Issue Date</Label>
                 <Input type="date" value={form.issue_date} onChange={e => setForm({ ...form, issue_date: e.target.value })} />

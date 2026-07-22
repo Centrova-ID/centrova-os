@@ -175,7 +175,7 @@ export function SoftwareLicensesPage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -233,7 +233,7 @@ export function SoftwareLicensesPage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Software' : 'Add Software'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
             <div className="space-y-1.5">
               <Label>Software Name</Label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. GitHub" />
@@ -242,7 +242,7 @@ export function SoftwareLicensesPage() {
               <Label>Vendor</Label>
               <Input value={form.vendor} onChange={e => setForm({ ...form, vendor: e.target.value })} placeholder="e.g. Microsoft" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>License Type</Label>
                 <Select value={form.license_type} onValueChange={v => setForm({ ...form, license_type: v })}>
@@ -263,7 +263,7 @@ export function SoftwareLicensesPage() {
               </div>
             </div>
             {form.license_type !== 'free' && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label>Billing Cycle</Label>
                   <Select value={form.billing_cycle} onValueChange={v => setForm({ ...form, billing_cycle: v })}>

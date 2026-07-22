@@ -26,6 +26,7 @@ export function AIAssistantPage() {
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showSidebar, setShowSidebar] = useState(false)
 
   const loadChats = useCallback(async () => {
     setLoadingChats(true)
@@ -60,6 +61,7 @@ export function AIAssistantPage() {
     if (error) { toast.error('Gagal membuat chat'); return }
     setChats(prev => [data as Chat, ...prev])
     setActiveChat(data as Chat)
+    setShowSidebar(false)
     setError(null)
   }
 
@@ -185,9 +187,9 @@ export function AIAssistantPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] gap-4">
+    <div className="flex h-[calc(100vh-8rem)] gap-4 relative">
       {/* Chat list sidebar */}
-      <div className="w-64 shrink-0 flex flex-col gap-2">
+      <div className={`w-full md:w-64 shrink-0 flex flex-col gap-2 ${activeChat && !showSidebar ? 'hidden md:flex' : 'flex'}`}>
         <Button onClick={handleNewChat} className="w-full">
           <Plus className="size-4" /> New Chat
         </Button>
@@ -202,7 +204,7 @@ export function AIAssistantPage() {
                 <div
                   key={chat.id}
                   className={`flex items-center gap-2 rounded-lg border p-2 cursor-pointer transition-colors ${activeChat?.id === chat.id ? 'border-primary bg-accent' : 'hover:bg-muted/50'}`}
-                  onClick={() => setActiveChat(chat)}
+                  onClick={() => { setActiveChat(chat); setShowSidebar(false) }}
                 >
                   <MessageSquare className="size-4 shrink-0 text-muted-foreground" />
                   <div className="flex-1 min-w-0">
@@ -222,7 +224,7 @@ export function AIAssistantPage() {
       </div>
 
       {/* Chat area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className={`flex-1 flex flex-col min-w-0 ${!activeChat || showSidebar ? 'hidden md:flex' : 'flex'}`}>
         {!activeChat ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
@@ -238,8 +240,13 @@ export function AIAssistantPage() {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between border-b pb-3 mb-3">
-              <h2 className="font-semibold truncate">{activeChat.title}</h2>
+            <div className="flex items-center justify-between border-b pb-3 mb-3 gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Button variant="ghost" size="icon" className="md:hidden size-8 shrink-0" onClick={() => setShowSidebar(true)}>
+                  <MessageSquare className="size-4" />
+                </Button>
+                <h2 className="font-semibold truncate">{activeChat.title}</h2>
+              </div>
               <Button variant="ghost" size="sm" onClick={() => handleRename(activeChat)}>Rename</Button>
             </div>
 

@@ -210,7 +210,7 @@ ${invoice.payment_notes ? `<div class="notes" style="margin-top:10px"><strong>Pa
           <Separator />
 
           {/* Meta */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Bill To</p>
               <p className="font-semibold">{clientName || '-'}</p>

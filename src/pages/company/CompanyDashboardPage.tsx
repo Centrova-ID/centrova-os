@@ -91,7 +91,7 @@ export function CompanyDashboardPage() {
         description="Ringkasan administrasi perusahaan Centrova"
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <Card key={i}>

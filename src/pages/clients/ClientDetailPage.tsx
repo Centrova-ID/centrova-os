@@ -102,22 +102,24 @@ export function ClientDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/clients')}>
-          <ArrowLeft className="size-4" />
-        </Button>
-        <div className="flex-1">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold tracking-tight">{client.company_name}</h1>
-            <StatusBadge status={client.status} type="client" />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/clients')} className="shrink-0">
+            <ArrowLeft className="size-4" />
+          </Button>
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">{client.company_name}</h1>
+              <StatusBadge status={client.status} type="client" />
+            </div>
+            {client.industry && <p className="text-sm text-muted-foreground mt-0.5">{client.industry}</p>}
           </div>
-          {client.industry && <p className="text-sm text-muted-foreground mt-0.5">{client.industry}</p>}
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => { setEditForm(client); setShowEdit(true) }}>
+        <div className="flex items-center gap-2 sm:ml-auto">
+          <Button variant="outline" size="sm" className="flex-1 sm:flex-initial" onClick={() => { setEditForm(client); setShowEdit(true) }}>
             <Pencil className="size-4" />Edit
           </Button>
-          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => setShowDelete(true)}>
+          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive flex-1 sm:flex-initial" onClick={() => setShowDelete(true)}>
             <Trash2 className="size-4" />Delete
           </Button>
         </div>
@@ -149,12 +151,14 @@ export function ClientDetailPage() {
         {/* Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="timeline">
-            <TabsList>
-              <TabsTrigger value="timeline">Timeline ({timeline.length})</TabsTrigger>
-              <TabsTrigger value="projects">Projects ({projects.length})</TabsTrigger>
-              <TabsTrigger value="invoices">Invoices ({invoices.length})</TabsTrigger>
-              <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
-            </TabsList>
+            <div className="w-full overflow-x-auto scrollbar-none">
+              <TabsList className="w-full justify-start flex-nowrap min-w-max">
+                <TabsTrigger value="timeline">Timeline ({timeline.length})</TabsTrigger>
+                <TabsTrigger value="projects">Projects ({projects.length})</TabsTrigger>
+                <TabsTrigger value="invoices">Invoices ({invoices.length})</TabsTrigger>
+                <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="timeline" className="mt-4">
               <div className="flex justify-end mb-3">
@@ -231,11 +235,11 @@ export function ClientDetailPage() {
 
       {/* Edit Dialog */}
       <Dialog open={showEdit} onOpenChange={setShowEdit}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto">
           <DialogHeader><DialogTitle>Edit Client</DialogTitle></DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-2"><Label>Company Name *</Label><Input value={editForm.company_name || ''} onChange={e => setEditForm(f => ({ ...f, company_name: e.target.value }))} /></div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2"><Label>PIC Name</Label><Input value={editForm.pic_name || ''} onChange={e => setEditForm(f => ({ ...f, pic_name: e.target.value }))} /></div>
               <div className="grid gap-2">
                 <Label>Status</Label>
@@ -247,7 +251,7 @@ export function ClientDetailPage() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2"><Label>Email</Label><Input value={editForm.email || ''} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} /></div>
               <div className="grid gap-2"><Label>WhatsApp</Label><Input value={editForm.whatsapp || ''} onChange={e => setEditForm(f => ({ ...f, whatsapp: e.target.value }))} /></div>
             </div>

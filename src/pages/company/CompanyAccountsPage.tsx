@@ -163,7 +163,7 @@ export function CompanyAccountsPage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -217,8 +217,8 @@ export function CompanyAccountsPage() {
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Account' : 'Add Account'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-4 py-2 max-h-[60vh] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Account Name</Label>
                 <Input value={form.account_name} onChange={e => setForm({ ...form, account_name: e.target.value })} placeholder="e.g. Centrova Gmail" />
@@ -237,7 +237,7 @@ export function CompanyAccountsPage() {
               <Label>Platform</Label>
               <Input value={form.platform} onChange={e => setForm({ ...form, platform: e.target.value })} placeholder="e.g. Gmail, GitHub, Cloudflare" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Email</Label>
                 <Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" />
