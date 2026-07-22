@@ -252,11 +252,12 @@ export function CalendarPage() {
               )
             })}
           </div>
+          </div>
         </div>
       ) : view === 'week' ? (
         <div className="rounded-lg border overflow-x-auto">
           <div className="min-w-[650px]">
-          <div className="grid grid-cols-7 border-b">
+            <div className="grid grid-cols-7 border-b">
             {weekDays.map((d, i) => (
               <div key={i} className={`p-2 text-center text-xs font-medium ${isToday(d) ? 'text-primary' : 'text-muted-foreground'}`}>
                 {DAY_NAMES[i]} {d.getDate()}
@@ -283,6 +284,7 @@ export function CalendarPage() {
                 </div>
               )
             })}
+          </div>
           </div>
         </div>
       ) : (
